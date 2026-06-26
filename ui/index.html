@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SEO Audit Pro</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">SF</div>
+      <div>
+        <div class="brand-title" data-i18n="appTitle">SEO Audit Pro</div>
+        <div class="brand-sub" data-i18n="tagline">Enterprise SEO & Link Crawler</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a class="nav-item active" data-view="dashboard">📊 <span data-i18n="results">Dashboard</span></a>
+      <a class="nav-item" data-view="insights">💡 <span data-i18n="insights">Insights</span></a>
+      <a class="nav-item" data-view="table">📋 <span data-i18n="results">Results</span></a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="control-group">
+        <label>🌐</label>
+        <select id="langSelect">
+          <option value="en">English</option>
+          <option value="fa">فارسی</option>
+          <option value="ar">العربية</option>
+        </select>
+      </div>
+      <button id="themeToggle" class="ghost-btn">🌙 / ☀️</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <!-- Top crawl bar -->
+    <header class="topbar">
+      <input type="text" id="urlInput" class="url-input" data-i18n-ph="urlPlaceholder" placeholder="Enter website URL">
+      <div class="config">
+        <label><span data-i18n="depth">Depth</span>
+          <input type="number" id="depthInput" min="1" max="10" value="3"></label>
+        <label><span data-i18n="concurrency">Concurrency</span>
+          <input type="number" id="concInput" min="1" max="20" value="5"></label>
+        <label><span data-i18n="maxPages">Max Pages</span>
+          <input type="number" id="maxInput" min="1" max="5000" value="200"></label>
+      </div>
+      <button id="startBtn" class="primary-btn" data-i18n="startCrawl">Start Crawl</button>
+      <button id="stopBtn" class="danger-btn" disabled data-i18n="stopCrawl">Stop</button>
+    </header>
+
+    <!-- Progress bar -->
+    <div class="progress-wrap">
+      <div class="progress-bar"><div id="progressFill" class="progress-fill"></div></div>
+      <span id="statusText" class="status-text" data-i18n="ready">Ready</span>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <section class="view active" id="view-dashboard">
+      <!-- Counters -->
+      <div class="counters">
+        <div class="counter-card">
+          <div class="counter-num" id="cPages">0</div>
+          <div class="counter-label" data-i18n="pagesScanned">Pages Scanned</div>
+        </div>
+        <div class="counter-card danger">
+          <div class="counter-num" id="cBroken">0</div>
+          <div class="counter-label" data-i18n="brokenLinks">Broken Links</div>
+        </div>
+        <div class="counter-card warn">
+          <div class="counter-num" id="cErrors">0</div>
+          <div class="counter-label" data-i18n="errors">Errors</div>
+        </div>
+        <div class="counter-card">
+          <div class="counter-num" id="cQueued">0</div>
+          <div class="counter-label" data-i18n="queued">Queued</div>
+        </div>
+      </div>
+
+      <!-- Scores -->
+      <div class="scores">
+        <div class="score-ring-card">
+          <canvas id="ringHealth" width="120" height="120"></canvas>
+          <div class="score-label" data-i18n="siteHealth">Site Health</div>
+        </div>
+        <div class="score-ring-card">
+          <canvas id="ringSeo" width="120" height="120"></canvas>
+          <div class="score-label" data-i18n="seoScore">SEO Score</div>
+        </div>
+        <div class="score-ring-card">
+          <canvas id="ringPerf" width="120" height="120"></canvas>
+          <div class="score-label" data-i18n="performance">Performance</div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="charts">
+        <div class="chart-card">
+          <h3 data-i18n="statusDist">Status Distribution</h3>
+          <canvas id="pieChart" width="300" height="240"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3 data-i18n="seoIssues">SEO Issues</h3>
+          <canvas id="barChart" width="300" height="240"></canvas>
+        </div>
+        <div class="chart-card wide">
+          <h3 data-i18n="crawlProgress">Crawl Progress</h3>
+          <canvas id="lineChart" width="640" height="200"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- INSIGHTS VIEW -->
+    <section class="view" id="view-insights">
+      <h2 data-i18n="insights">SEO Insights</h2>
+      <div id="insightsList" class="insights-list"></div>
+    </section>
+
+    <!-- TABLE VIEW -->
+    <section class="view" id="view-table">
+      <div class="table-toolbar">
+        <input type="text" id="tableSearch" class="search-input" data-i18n-ph="search" placeholder="Search URLs...">
+        <select id="statusFilter">
+          <option value="all" data-i18n="allStatus">All</option>
+          <option value="broken" data-i18n="filterBroken">Broken only</option>
+          <option value="redirect" data-i18n="filterRedirect">Redirects</option>
+        </select>
+        <div class="export-buttons">
+          <button class="ghost-btn" id="exportCsv" data-i18n="exportCSV">Export CSV</button>
+          <button class="ghost-btn" id="exportJson" data-i18n="exportJSON">Export JSON</button>
+          <button class="ghost-btn" id="exportHtml" data-i18n="exportHTML">Export HTML</button>
+        </div>
+      </div>
+      <div class="table-scroll">
+        <table id="resultsTable">
+          <thead>
+            <tr>
+              <th data-sort="url" data-i18n="colUrl">URL</th>
+              <th data-sort="status" data-i18n="colStatus">Code</th>
+              <th data-sort="statusLabel" data-i18n="colLabel">Status</th>
+              <th data-sort="title" data-i18n="colTitle">Title</th>
+              <th data-i18n="colMeta">Meta</th>
+              <th data-i18n="colH1">H1</th>
+              <th data-sort="responseTime" data-i18n="colTime">Time</th>
+              <th data-sort="depth" data-i18n="colDepth">Depth</th>
+              <th data-i18n="colIssues">Issues</th>
+            </tr>
+          </thead>
+          <tbody id="resultsBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="i18n.js"></script>
+  <script src="charts.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
